@@ -213,13 +213,14 @@ try {
   await host.locator('.cz-claim [data-until]').waitFor({ timeout: 5000 });
   assert.match(await host.textContent('.cz-claim'), /Kai seems to be away\.\s*You can claim the win in 0:4\d/);
   assert.equal(await host.locator('[data-act="claimWin"]').count(), 0, 'no claim straight away');
-  const readCount = () => host.evaluate(() => { const e = document.querySelector('.cz-claim [data-until]'); return { text: e.textContent, until: e.dataset.until, now: Date.now(), vis: document.visibilityState }; });
-  await host.evaluate(() => { window.__gaps = []; let last = performance.now(); setInterval(() => { const n = performance.now(); if (n - last > 700) window.__gaps.push(Math.round(n - last)); last = n; }, 250); });
-  const count0 = await readCount();
-  await host.waitForTimeout(2200);
-  const count1 = await readCount();
+  // The display rounds up and refreshes twice a second, so over 3.2 s it must drop by at least 2.
+  const readCount = () => host.evaluate(() => { const e = document.querySelector('.cz-claim [data-until]'); return { text: e.textContent, until: e.dataset.until, now: Date.now() }; });
   const secs = (t) => Number(t.split(':')[0]) * 60 + Number(t.split(':')[1]);
-  assert.ok(secs(count1.text) <= secs(count0.text) - 2, `the countdown ticks: ${JSON.stringify([count0, count1, await host.evaluate(() => window.__gaps)])}`);
+  const count0 = await readCount();
+  await host.waitForTimeout(3200);
+  const count1 = await readCount();
+  assert.equal(count1.until, count0.until, 'the claim time does not move');
+  assert.ok(secs(count1.text) <= secs(count0.text) - 2, `the countdown ticks: ${JSON.stringify([count0, count1])}`);
   await host.screenshot({ path: 'shots-chess-countdown.png' });
   log(`host sees Kai away after ${((Date.now() - closedAt) / 1000).toFixed(0)}s, countdown running`);
 
