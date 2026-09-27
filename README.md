@@ -1,4 +1,4 @@
-# Game Night
+# Sava Game Night
 
 **Five games, one link.** Play friends online with a 4-letter room code, or play solo on any phone, tablet or computer. No app, no sign-up.
 
@@ -31,7 +31,7 @@
 
 ```
 site/
-  index.html          the Game Night home page
+  index.html          the Sava Game Night home page
   shared/             room kit, page frame, shared styles
   vendor/             mqtt.js and chess.js
   games/<game>/       one folder per game

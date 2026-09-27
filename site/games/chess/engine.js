@@ -1,4 +1,4 @@
-// Chess rules for Game Night. Pure functions over plain JSON state: nothing here
+// Chess rules for Sava Game Night. Pure functions over plain JSON state: nothing here
 // touches the DOM, and every function returns a new state instead of changing
 // its input. The move rules themselves come from the vendored chess.js.
 import { Chess } from '../../vendor/chess.js';

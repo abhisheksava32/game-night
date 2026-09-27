@@ -1,4 +1,4 @@
-/* Game Night shared styles: used by the hub and every game. Each page can set --accent. */
+/* Sava Game Night shared styles: used by the hub and every game. Each page can set --accent. */
 :root {
   --bg: #0d0e18;
   --bg-2: #141628;

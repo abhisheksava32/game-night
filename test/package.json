@@ -1,7 +1,7 @@
 {
   "name": "game-night-tests",
   "version": "1.0.0",
-  "description": "Tests for Game Night",
+  "description": "Tests for Sava Game Night",
   "scripts": {
     "test": "node --test *.test.mjs",
     "e2e": "node run-e2e.mjs",
