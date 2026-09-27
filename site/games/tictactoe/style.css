@@ -1,0 +1,31 @@
+.ttt { display: flex; flex-direction: column; gap: 14px; }
+.ttt-score { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: stretch; }
+.ttt-score .side {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px;
+  padding: 10px; border-radius: 14px; background: var(--surface); border: 2px solid var(--line); min-width: 0;
+}
+.ttt-score .side.active { border-color: var(--accent); }
+.ttt-score .who { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
+.ttt-score .who b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; }
+.ttt-score .mark { font-family: var(--display); font-size: 18px; letter-spacing: 0.05em; }
+.ttt-score .pts { font-family: var(--display); font-size: 34px; color: var(--accent); }
+.ttt-score .draws { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; color: var(--muted); padding: 0 4px; }
+.ttt-score .draws b { font-family: var(--display); font-size: 26px; color: var(--text); font-weight: 400; }
+.m0 { color: #ff7ab6; }
+.m1 { color: #5ec8f2; }
+.ttt-board {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+  width: min(100%, 420px); margin: 0 auto; aspect-ratio: 1;
+}
+.cell {
+  border-radius: 18px; border: 2px solid var(--edge); background: #0b0c16; cursor: pointer;
+  font-family: var(--display); font-size: clamp(56px, 18vw, 96px); line-height: 1; padding: 0;
+  display: grid; place-items: center; transition: background 0.15s, transform 0.08s;
+}
+.cell:not(:disabled):hover { background: #14162a; }
+.cell:not(:disabled):active { transform: scale(0.97); }
+.cell:disabled { cursor: default; }
+.cell.pop { animation: pop 0.18s ease-out; }
+.cell.win { background: color-mix(in srgb, var(--accent) 22%, #0b0c16); border-color: var(--accent); }
+@keyframes pop { from { transform: scale(0.6); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (max-width: 380px) { .ttt-score .side { grid-template-columns: 1fr auto; } .ttt-score .side .avatar { display: none; } }

@@ -1,0 +1,215 @@
+/* Snake. Sizes are tuned so the score bar, board and arrow pad all fit one screen without scrolling.
+   Height budget in portrait: top bar 57 + page top 16 + score bar 66 + two 12px gaps + pad gaps 16 = 179px,
+   plus the page bottom (--bottom), the hint line (--hint, dropped on short screens) and three pad rows. */
+.snake {
+  --pad: clamp(40px, 7.2vh, 64px);
+  --hint: 32px;
+  --bottom: max(12px, env(safe-area-inset-bottom, 0px));
+  --board: min(100%, max(220px, calc(100vh - 180px - var(--bottom) - var(--hint) - 3 * var(--pad))));
+  display: flex; flex-direction: column; gap: 12px;
+}
+@supports (height: 100dvh) {
+  .snake {
+    --pad: clamp(40px, 7.2dvh, 64px);
+    --board: min(100%, max(220px, calc(100dvh - 180px - var(--bottom) - var(--hint) - 3 * var(--pad))));
+  }
+}
+/* While a round is on screen the page only needs a small bottom margin, so nothing below the pad makes it scroll. */
+.wrap:has(.snake) { padding-bottom: max(12px, env(safe-area-inset-bottom, 0px)); }
+/* On shorter screens the hint line goes (the ready card says the same) and the board gets the room. */
+@media (max-height: 740px) {
+  .snake { --hint: 0px; }
+  .snake > .hint { display: none; }
+}
+/* With a mouse the arrow pad is a backup, so keep it small and give the board the room. */
+@media (hover: hover) and (pointer: fine) {
+  .snake { --pad: 46px; }
+}
+/* ---------- score bar ---------- */
+/* The score bar lines up with the board, but never gets narrower than 340px (or the screen). */
+.snake-hud { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; gap: 8px; width: max(var(--board), min(100%, 340px)); margin: 0 auto; }
+.snake-hud .stat {
+  display: flex; flex-direction: column; justify-content: center; gap: 3px; min-width: 0;
+  padding: 8px 12px; border-radius: 14px; background: var(--surface); border: 2px solid var(--line); line-height: 1;
+}
+.snake-hud .k { font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.snake-hud b {
+  display: block; font-family: var(--display); font-weight: 400; font-size: 32px; letter-spacing: 0.04em;
+  color: var(--text); transform-origin: left center; font-variant-numeric: tabular-nums;
+}
+.snake-hud .score { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.snake-hud .score b { color: var(--accent); text-shadow: 0 0 16px color-mix(in srgb, var(--accent) 45%, transparent); }
+.snake-hud b.bump { animation: snake-bump 0.3s ease-out; }
+@keyframes snake-bump { 40% { transform: scale(1.22); } }
+.snake-pause {
+  width: 56px; padding: 0; display: grid; place-items: center; cursor: pointer;
+  border-radius: 14px; border: 2px solid var(--line); background: var(--surface); color: var(--text);
+  transition: border-color 0.15s, color 0.15s, opacity 0.15s;
+}
+.snake-pause svg { width: 24px; height: 24px; fill: currentColor; }
+.snake-pause:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.snake-pause:disabled { opacity: 0.4; cursor: default; }
+
+/* ---------- board ---------- */
+.snake-stage {
+  position: relative; margin: 0 auto; aspect-ratio: 1; width: var(--board); container-type: inline-size;
+  border-radius: 14px; overflow: hidden; background: #090a13;
+  border: 2px solid color-mix(in srgb, var(--accent) 55%, var(--edge));
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.35), 0 0 26px color-mix(in srgb, var(--accent) 20%, transparent), 0 12px 30px rgba(0, 0, 0, 0.4);
+  touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
+}
+.snake[data-mode="nowalls"] .snake-stage {
+  border-style: dashed; border-color: color-mix(in srgb, var(--accent) 40%, var(--edge));
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.35), 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+.snake-stage canvas { display: block; width: 100%; height: 100%; }
+.snake-stage.crashed { border-color: var(--bad); border-style: solid; box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.35), 0 0 26px rgba(255, 107, 94, 0.3); }
+.snake-stage.shake { animation: snake-shake 0.36s ease-out; }
+@keyframes snake-shake {
+  20% { transform: translate(-6px, 2px); }
+  40% { transform: translate(5px, -2px); }
+  60% { transform: translate(-3px, 1px); }
+  80% { transform: translate(2px, 0); }
+}
+
+/* ---------- cards over the board ---------- */
+.snake-overlay {
+  position: absolute; inset: 0; display: grid; padding: 14px;
+  background: rgba(7, 8, 15, 0.55); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
+  animation: snake-fade 0.18s ease-out;
+}
+/* The paused and game over cards are sized to fit the board, but if one ever does not, it scrolls instead of being cut off. */
+.snake-overlay.is-paused, .snake-overlay.is-over { overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; }
+@keyframes snake-fade { from { opacity: 0; } }
+/* margin: auto centres the card, and unlike align-items it keeps the top of a too-tall card reachable. */
+.snake-card {
+  width: min(100%, 300px); margin: auto; display: flex; flex-direction: column; gap: 10px; text-align: center;
+  padding: 18px 16px; border-radius: var(--radius); background: rgba(20, 22, 40, 0.95);
+  border: 1px solid var(--line); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  animation: rise 0.22s ease-out;
+}
+/* The ready card sits in the top half so the snake (in the middle row) stays in view. */
+.snake-overlay.is-ready {
+  padding: 12px; backdrop-filter: none; -webkit-backdrop-filter: none;
+  background: linear-gradient(0deg, transparent 50%, rgba(7, 8, 15, 0.6));
+}
+.snake-overlay.is-ready .snake-card { margin: 0 auto auto; }
+.snake-card.compact { gap: 8px; padding: 12px 16px; }
+.snake-card.compact .btn { min-height: 44px; }
+.snake-card .ready-line { margin: 0; font-size: 15px; color: var(--muted); }
+.snake-card .ready-line b { color: var(--text); margin-right: 2px; }
+.snake-card h2 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 46px; line-height: 0.95; letter-spacing: 0.03em; }
+.snake-card .hint { font-size: 14px; }
+.snake-card .row { gap: 8px; }
+.snake-card .btn { min-height: 48px; font-size: 16px; padding: 10px 12px; white-space: nowrap; }
+.snake-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.snake-stats div { padding: 8px 6px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); line-height: 1; }
+.snake-stats span { display: block; margin-bottom: 4px; font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.snake-stats b { font-family: var(--display); font-weight: 400; font-size: 36px; color: var(--text); }
+.snake-stats .score b { color: var(--accent); }
+
+/* Smaller boards (short or narrow screens) get tighter cards, so every button stays on the board on one line. */
+@container (max-width: 330px) {
+  .snake-overlay { padding: 10px; }
+  .snake-card { gap: 7px; padding: 12px; }
+  .snake-card h2 { font-size: 34px; }
+  .snake-card .hint { font-size: 13px; line-height: 1.35; }
+  .snake-stats div { padding: 6px; }
+  .snake-stats b { font-size: 28px; }
+  .snake-card .btn { min-height: 44px; font-size: 15px; padding: 8px 10px; }
+  /* Each button starts from its label width, so "Play again" gets the room it needs next to "Back". */
+  .snake-card .row > .btn { flex: 1 1 auto; width: auto; }
+}
+/* On small boards keep the ready card short enough to clear the middle row. */
+@container (max-width: 300px) {
+  .snake-card.compact { padding: 10px 12px; }
+  .snake-card.compact .kicker, .snake-card .ready-line b { display: none; }
+  .snake-card .ready-line { font-size: 14px; }
+}
+@container (max-width: 262px) {
+  .snake-overlay { padding: 6px; }
+  .snake-card { gap: 6px; padding: 10px; }
+  .snake-card h2 { font-size: 28px; }
+  .snake-card .hint { font-size: 12.5px; line-height: 1.3; }
+  .snake-stats div { padding: 5px; }
+  .snake-stats span { font-size: 10px; margin-bottom: 3px; }
+  .snake-stats b { font-size: 24px; }
+  .snake-card .btn { min-height: 42px; font-size: 14px; padding: 6px 8px; }
+}
+
+/* ---------- arrow pad ---------- */
+.snake-pad {
+  display: grid; justify-content: center; gap: 8px;
+  grid-template-columns: repeat(3, calc(var(--pad) * 1.2));
+  grid-template-rows: repeat(3, var(--pad));
+  touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+}
+.snake-pad button {
+  display: grid; place-items: center; padding: 0; cursor: pointer; color: var(--text);
+  border-radius: 16px; border: 2px solid var(--edge); background: linear-gradient(180deg, #23274a, #1a1d36);
+  box-shadow: 0 4px 0 #090a13; touch-action: none; -webkit-tap-highlight-color: transparent;
+  transition: transform 0.06s, box-shadow 0.06s, background 0.12s, border-color 0.12s, color 0.12s;
+}
+.snake-pad button svg { width: 30px; height: 30px; }
+.snake-pad button:hover { border-color: color-mix(in srgb, var(--accent) 50%, var(--edge)); }
+.snake-pad button.on, .snake-pad button:active {
+  transform: translateY(3px); box-shadow: 0 1px 0 #090a13; color: var(--accent);
+  border-color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, #1a1d36);
+}
+.pad-up { grid-area: 1 / 2; }
+.pad-left { grid-area: 2 / 1; }
+.pad-right { grid-area: 2 / 3; }
+.pad-down { grid-area: 3 / 2; }
+.pad-left svg { transform: rotate(-90deg); }
+.pad-right svg { transform: rotate(90deg); }
+.pad-down svg { transform: rotate(180deg); }
+.pad-mid {
+  grid-area: 2 / 2; align-self: center; justify-self: center; width: 14px; height: 14px; border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 55%, transparent); box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+
+/* Touch hints on phones, key hints where there is a mouse. */
+.snake .k-keys { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .snake .k-keys { display: inline; }
+  .snake .k-touch { display: none; }
+}
+.snake button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* ---------- home: best scores ---------- */
+.snake-best-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.snake-best { padding: 12px 14px; border-radius: 14px; background: #0b0c16; border: 1px solid var(--edge); line-height: 1; }
+.snake-best .label { margin: 0 0 6px; }
+.snake-best b { font-family: var(--display); font-weight: 400; font-size: 42px; letter-spacing: 0.03em; color: var(--accent); }
+
+@media (max-width: 360px) {
+  .snake-hud .stat { padding: 8px 9px; }
+  .snake-hud b { font-size: 28px; }
+  .snake-pause { width: 48px; }
+}
+
+/* Phones on their side (and short, wide windows): board on the left, score bar and arrow pad on the right. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .snake {
+    --pad: clamp(40px, 11vh, 54px);
+    --side: max(176px, calc(3.6 * var(--pad) + 16px));
+    --board: min(calc(100% - var(--side) - 20px), max(200px, calc(100vh - 73px - var(--bottom))));
+    display: grid; justify-content: center; column-gap: 20px; row-gap: 0;
+    grid-template-columns: var(--board) var(--side);
+    grid-template-rows: 1fr auto auto 1fr;
+    grid-template-areas: "board ." "board hud" "board pad" "board .";
+  }
+  @supports (height: 100dvh) {
+    .snake {
+      --pad: clamp(40px, 11dvh, 54px);
+      --board: min(calc(100% - var(--side) - 20px), max(200px, calc(100dvh - 73px - var(--bottom))));
+    }
+  }
+  .snake-stage { grid-area: board; width: 100%; margin: 0; }
+  .snake-hud { grid-area: hud; width: auto; margin: 0; grid-template-columns: 1fr 1fr; }
+  .snake-hud .stat { padding: 6px 10px; }
+  .snake-hud b { font-size: 28px; }
+  .snake-pause { width: auto; min-height: 44px; }
+  .snake-pad { grid-area: pad; margin-top: 12px; }
+  .snake > .hint { display: none; }
+}

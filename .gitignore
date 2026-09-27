@@ -1,0 +1,9 @@
+node_modules/
+test/shots*/
+test/shots-*.png
+test/capture*.mjs
+.DS_Store
+site/games/race/
+test/race.*
+test/_*
+test/dbg-*

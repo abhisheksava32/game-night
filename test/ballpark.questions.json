@@ -1,0 +1,362 @@
+[
+ {
+  "q": "How many keys are on a standard piano?",
+  "a": 88,
+  "u": "keys",
+  "f": "52 white keys and 36 black keys."
+ },
+ {
+  "q": "How many bones are in the typical adult human body?",
+  "a": 206,
+  "u": "bones",
+  "f": "Newborns have about 275 to 300 bones - many of them fuse together as a child grows."
+ },
+ {
+  "q": "How many bones are in one human hand, wrist included?",
+  "a": 27,
+  "u": "bones",
+  "f": "8 in the wrist, 5 in the palm and 14 in the fingers."
+ },
+ {
+  "q": "How many teeth are in a full adult human set, wisdom teeth included?",
+  "a": 32,
+  "u": "teeth",
+  "f": "Including four wisdom teeth, which many people never get."
+ },
+ {
+  "q": "How many chromosomes are in a typical human body cell?",
+  "a": 46,
+  "u": "chromosomes",
+  "f": "They come in 23 pairs - one set from each parent."
+ },
+ {
+  "q": "What is the traditional 'normal' human body temperature in degrees Fahrenheit?",
+  "a": 98.6,
+  "u": "°F",
+  "f": "That's 37 °C. Recent studies suggest the real average is a little lower."
+ },
+ {
+  "q": "How many elements are on the periodic table?",
+  "a": 118,
+  "u": "elements",
+  "f": "The heaviest, oganesson (element 118), was officially named in 2016."
+ },
+ {
+  "q": "What is the atomic number of gold?",
+  "a": 79,
+  "u": "",
+  "f": "Its symbol, Au, comes from the Latin word aurum."
+ },
+ {
+  "q": "How many seconds are in one day?",
+  "a": 86400,
+  "u": "seconds",
+  "f": "24 hours x 60 minutes x 60 seconds."
+ },
+ {
+  "q": "How many hours are in a non-leap year?",
+  "a": 8760,
+  "u": "hours",
+  "f": "365 days x 24 hours."
+ },
+ {
+  "q": "How many feet are in one mile?",
+  "a": 5280,
+  "u": "feet",
+  "f": "It dates back to an English statute from 1593."
+ },
+ {
+  "q": "How many centimeters are in one inch?",
+  "a": 2.54,
+  "u": "cm",
+  "f": "Exactly 2.54 - it was fixed by international agreement in 1959."
+ },
+ {
+  "q": "How many individual squares make up a standard chessboard?",
+  "a": 64,
+  "u": "squares",
+  "f": "An 8 x 8 grid of 32 light and 32 dark squares. If you count every square of every size, from 1x1 up to the whole 8x8 board, you get 204."
+ },
+ {
+  "q": "How many dots are there in total on a standard six-sided die?",
+  "a": 21,
+  "u": "dots",
+  "f": "1+2+3+4+5+6. Opposite faces always add up to 7."
+ },
+ {
+  "q": "How many colored stickers are on a classic 3x3 Rubik's Cube?",
+  "a": 54,
+  "u": "stickers",
+  "f": "9 stickers on each of the 6 faces."
+ },
+ {
+  "q": "How many letter tiles come in a standard English Scrabble set?",
+  "a": 100,
+  "u": "tiles",
+  "f": "That includes 2 blank tiles."
+ },
+ {
+  "q": "How many spaces are around the edge of a Monopoly board?",
+  "a": 40,
+  "u": "spaces",
+  "f": "Including Go, Jail, Free Parking and Go To Jail."
+ },
+ {
+  "q": "How many squares are in a completed Sudoku grid?",
+  "a": 81,
+  "u": "squares",
+  "f": "A 9 x 9 grid split into nine 3 x 3 boxes."
+ },
+ {
+  "q": "How many Pokémon were in the original Pokémon Red and Blue Pokédex?",
+  "a": 151,
+  "u": "Pokémon",
+  "f": "Mew was number 151."
+ },
+ {
+  "q": "How many episodes of the TV show Friends were made?",
+  "a": 236,
+  "u": "episodes",
+  "f": "10 seasons, from 1994 to 2004."
+ },
+ {
+  "q": "How many Academy Awards did the 1997 film Titanic win?",
+  "a": 11,
+  "u": "Oscars",
+  "f": "A record it shares with Ben-Hur and The Return of the King."
+ },
+ {
+  "q": "What was the maximum length of a tweet, in characters, when Twitter launched?",
+  "a": 140,
+  "u": "characters",
+  "f": "The limit doubled to 280 in 2017."
+ },
+ {
+  "q": "How many strings does a standard concert pedal harp have?",
+  "a": 47,
+  "u": "strings",
+  "f": "Seven pedals let the player change the key."
+ },
+ {
+  "q": "According to the Louvre, how tall is the Mona Lisa's poplar wood panel, to the nearest centimeter?",
+  "a": 79,
+  "u": "cm",
+  "f": "The Louvre's collection record lists the panel at 79.4 x 53.4 cm, oil on poplar, though many books and websites still quote the older figure of 77 x 53 cm."
+ },
+ {
+  "q": "How tall is Mount Everest, in meters?",
+  "a": 8849,
+  "u": "m",
+  "f": "Measured by a joint China-Nepal survey announced in 2020."
+ },
+ {
+  "q": "How tall is the Burj Khalifa in Dubai, in meters?",
+  "a": 828,
+  "u": "m",
+  "f": "It has been the world's tallest building since 2010."
+ },
+ {
+  "q": "How many floors does the Empire State Building have?",
+  "a": 102,
+  "u": "floors",
+  "f": "It was the world's tallest building for nearly 40 years."
+ },
+ {
+  "q": "How tall is the Statue of Liberty from the ground to the tip of the torch, in feet?",
+  "a": 305,
+  "u": "feet",
+  "f": "The statue alone is about 151 feet - the rest is the pedestal and foundation."
+ },
+ {
+  "q": "How many rooms are in Buckingham Palace?",
+  "a": 775,
+  "u": "rooms",
+  "f": "Including 78 bathrooms and 19 state rooms."
+ },
+ {
+  "q": "According to the Panama Canal Authority, about how long is the Panama Canal, in kilometers?",
+  "a": 80,
+  "u": "km",
+  "f": "About 50 miles, linking the Atlantic and Pacific oceans. Measured from deep water to deep water, other sources put it at about 82 km."
+ },
+ {
+  "q": "According to Encyclopaedia Britannica, how long is the Nile River, in kilometers?",
+  "a": 6650,
+  "u": "km",
+  "f": "It flows north to the Mediterranean Sea, and its drainage basin spans 11 countries."
+ },
+ {
+  "q": "How deep is the Challenger Deep, the deepest known point in the ocean, in meters?",
+  "a": 10935,
+  "u": "m",
+  "f": "It lies in the Mariana Trench in the western Pacific."
+ },
+ {
+  "q": "How long is Earth's circumference at the equator, in kilometers?",
+  "a": 40075,
+  "u": "km",
+  "f": "About 24,901 miles."
+ },
+ {
+  "q": "What is the average distance from Earth to the Moon, in kilometers?",
+  "a": 384400,
+  "u": "km",
+  "f": "When the Moon is at its farthest, every other planet in the solar system could fit side by side in the gap between it and Earth."
+ },
+ {
+  "q": "How many seconds does sunlight take to reach Earth?",
+  "a": 499,
+  "u": "seconds",
+  "f": "About 8 minutes and 20 seconds."
+ },
+ {
+  "q": "What is the speed of light in a vacuum, in kilometers per second?",
+  "a": 299792,
+  "u": "km/s",
+  "f": "Nothing with mass can reach it."
+ },
+ {
+  "q": "How many Earth days does one year on Mars last?",
+  "a": 687,
+  "u": "days",
+  "f": "Almost twice as long as an Earth year."
+ },
+ {
+  "q": "How many Earth days does it take Venus to spin once on its axis?",
+  "a": 243,
+  "u": "days",
+  "f": "Longer than its year, which lasts about 225 Earth days."
+ },
+ {
+  "q": "How many Earth years does it take Neptune to orbit the Sun once?",
+  "a": 165,
+  "u": "years",
+  "f": "It completed its first orbit since its discovery in 2011."
+ },
+ {
+  "q": "Roughly how many Earths could fit inside the Sun, by volume?",
+  "a": 1300000,
+  "u": "Earths",
+  "f": "About 1.3 million."
+ },
+ {
+  "q": "What is the temperature at the surface of the Sun, in degrees Celsius?",
+  "a": 5500,
+  "u": "°C",
+  "f": "Its core is millions of degrees hotter."
+ },
+ {
+  "q": "Roughly how fast does the International Space Station travel, in kilometers per hour?",
+  "a": 27600,
+  "u": "km/h",
+  "f": "That is about 7.7 km every second, fast enough to circle Earth about 16 times a day. NASA usually rounds it up to 17,500 mph."
+ },
+ {
+  "q": "How many people have walked on the Moon?",
+  "a": 12,
+  "u": "people",
+  "f": "All of them between 1969 and 1972, on six Apollo missions."
+ },
+ {
+  "q": "How old is the universe, in billions of years?",
+  "a": 13.8,
+  "u": "billion years",
+  "f": "Estimated from the cosmic microwave background."
+ },
+ {
+  "q": "How many countries are in the European Union?",
+  "a": 27,
+  "u": "countries",
+  "f": "The UK left in 2020, taking it from 28 to 27."
+ },
+ {
+  "q": "How many member states does the United Nations have?",
+  "a": 193,
+  "u": "countries",
+  "f": "The newest, South Sudan, joined in 2011."
+ },
+ {
+  "q": "How many UN member states are in Africa?",
+  "a": 54,
+  "u": "countries",
+  "f": "That is more than any other continent. The African Union has 55 members because it also includes the Sahrawi Arab Democratic Republic (Western Sahara), which is not a UN member."
+ },
+ {
+  "q": "How many official time zones does Russia use?",
+  "a": 11,
+  "u": "time zones",
+  "f": "They run from Kaliningrad (UTC+2) to Kamchatka (UTC+12). France has even more, 12, if you count its overseas territories."
+ },
+ {
+  "q": "How many states does India have?",
+  "a": 28,
+  "u": "states",
+  "f": "Plus 8 union territories."
+ },
+ {
+  "q": "How many countries share a land border with Germany?",
+  "a": 9,
+  "u": "countries",
+  "f": "Its neighbors are Denmark to the north, Poland and Czechia to the east, Austria and Switzerland to the south, France to the southwest, and Luxembourg, Belgium and the Netherlands to the west."
+ },
+ {
+  "q": "How many minutes long is a regulation NBA basketball game?",
+  "a": 48,
+  "u": "minutes",
+  "f": "Four 12-minute quarters."
+ },
+ {
+  "q": "How long is a marathon, in kilometers?",
+  "a": 42.195,
+  "u": "km",
+  "f": "The odd distance was fixed after the 1908 London Olympics."
+ },
+ {
+  "q": "How many teeth does an adult dog have?",
+  "a": 42,
+  "u": "teeth",
+  "f": "Ten more than an adult human."
+ },
+ {
+  "q": "How many teeth does an adult cat have?",
+  "a": 30,
+  "u": "teeth",
+  "f": "Kittens have 26 baby teeth first."
+ },
+ {
+  "q": "How many months does an African elephant pregnancy last?",
+  "a": 22,
+  "u": "months",
+  "f": "The longest pregnancy of any land mammal."
+ },
+ {
+  "q": "How many legs does a lobster have, claws included?",
+  "a": 10,
+  "u": "legs",
+  "f": "Lobsters are decapods - literally 'ten-footed'."
+ },
+ {
+  "q": "How many degrees do the interior angles of a hexagon add up to?",
+  "a": 720,
+  "u": "degrees",
+  "f": "Any polygon's angles add up to (sides - 2) x 180."
+ },
+ {
+  "q": "At what temperature does water boil at sea level, in degrees Fahrenheit?",
+  "a": 212,
+  "u": "°F",
+  "f": "That's 100 °C."
+ },
+ {
+  "q": "How many symphonies did Beethoven complete?",
+  "a": 9,
+  "u": "symphonies",
+  "f": "He was almost completely deaf when he wrote the Ninth."
+ },
+ {
+  "q": "How many properties can you buy in the standard Monopoly game?",
+  "a": 28,
+  "u": "properties",
+  "f": "22 streets, 4 railroads and 2 utilities."
+ }
+]

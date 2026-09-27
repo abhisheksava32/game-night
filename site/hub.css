@@ -1,0 +1,61 @@
+.hub-hero { text-align: center; padding: 36px 0 8px; }
+.hub-hero .title { font-size: clamp(72px, 20vw, 132px); }
+
+.games {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+  margin: 18px 0 16px;
+}
+.game {
+  --c: var(--accent);
+  --c2: #1c1f36;
+  position: relative;
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+  border-radius: 20px;
+  text-decoration: none;
+  color: var(--text);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--c2) 85%, #000) 0%, var(--surface) 70%);
+  border: 1px solid var(--line);
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+.game:hover, .game:focus-visible {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--c) 70%, transparent);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), 0 0 0 1px color-mix(in srgb, var(--c) 40%, transparent);
+  outline: none;
+}
+.game::after {
+  content: "\2192";
+  position: absolute; right: 16px; top: 14px;
+  font-weight: 800; color: var(--c); opacity: 0.8;
+}
+.art {
+  width: 88px; height: 88px; border-radius: 20px;
+  display: grid; place-items: center;
+  background: color-mix(in srgb, var(--c) 14%, #0b0c16);
+  border: 1px solid color-mix(in srgb, var(--c) 30%, transparent);
+}
+.art svg { width: 64px; height: 64px; }
+.info { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.info b { font-family: var(--display); font-weight: 400; font-size: 32px; line-height: 1; letter-spacing: 0.03em; color: var(--c); }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tags span {
+  font-size: 12px; font-weight: 700; color: var(--muted);
+  border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px;
+}
+.desc { color: var(--muted); font-size: 15px; line-height: 1.4; }
+
+.how { max-width: 720px; margin: 0 auto 16px; }
+.how .steps { margin-bottom: 0; }
+
+@media (max-width: 400px) {
+  .game { grid-template-columns: 68px 1fr; gap: 12px; padding: 14px; }
+  .art { width: 68px; height: 68px; border-radius: 16px; }
+  .art svg { width: 50px; height: 50px; }
+  .info b { font-size: 28px; }
+}
