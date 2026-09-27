@@ -1,0 +1,197 @@
+.ludo { display: flex; flex-direction: column; gap: 12px; }
+
+/* ---------- status ---------- */
+.ludo .turn { margin: 0; min-height: 48px; text-align: center; line-height: 1.3; }
+.ludo .turn .sw {
+  flex: none; width: 14px; height: 14px; border-radius: 50%; background: var(--c);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 30%, transparent);
+}
+.ludo .turn.mine { border-color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); }
+
+/* ---------- board ---------- */
+.ludo-board {
+  /* Never taller than the screen can show next to the status line and the top bar. */
+  position: relative; width: min(100%, 540px, max(300px, calc(100vh - 150px))); aspect-ratio: 1; margin: 0 auto;
+  width: min(100%, 540px, max(300px, calc(100dvh - 150px)));
+  border-radius: 14px; background: #111328;
+  box-shadow: 0 0 0 2px var(--edge), 0 14px 34px rgba(0, 0, 0, 0.45);
+  touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
+}
+.ludo-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; border-radius: 14px; }
+.ludo-layer { position: absolute; inset: 0; }
+
+.base-ov { position: absolute; width: 40%; height: 40%; pointer-events: none; border-radius: 10%; transition: background 0.3s; }
+.base-ov.off { background: rgba(9, 10, 20, 0.66); }
+.base-ov.now::after, .base-ov.won::after {
+  content: ""; position: absolute; inset: 2%; border-radius: 10%;
+  border: 3px solid rgba(255, 255, 255, 0.95); animation: baseglow 1.4s ease-in-out infinite;
+}
+.base-ov.won::after { border-color: #fff; animation-duration: 0.8s; }
+@keyframes baseglow {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5), inset 0 0 12px rgba(255, 255, 255, 0.35); }
+  50% { opacity: 0.55; box-shadow: 0 0 0 6px rgba(255, 255, 255, 0), inset 0 0 4px rgba(255, 255, 255, 0.1); }
+}
+
+/* ---------- tokens ---------- */
+.tok, .dest {
+  position: absolute; margin: 0; padding: 0; border-radius: 50%;
+  left: calc(var(--x) * 100% / 15); top: calc(var(--y) * 100% / 15);
+  transform: translate(-50%, -50%);
+  -webkit-tap-highlight-color: transparent;
+}
+.tok {
+  z-index: 2; pointer-events: none; /* taps go to the board, which picks the nearest movable token (pick.js) */
+  width: calc(var(--s, 0.78) * 100% / 15); height: calc(var(--s, 0.78) * 100% / 15);
+  border: 2px solid #fff; opacity: 1; cursor: default;
+  background: radial-gradient(circle at 34% 30%, color-mix(in srgb, var(--c) 40%, #fff) 0 12%, var(--c) 46%, color-mix(in srgb, var(--c) 66%, #000) 100%);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45), 0 2px 4px rgba(0, 0, 0, 0.55);
+  transition: left 0.14s ease-in-out, top 0.14s ease-in-out, width 0.2s, height 0.2s;
+}
+.tok.sm { border-width: 1.5px; }
+.tok.far { transition-duration: 0.45s; }
+.tok.moving { z-index: 6; }
+.tok.can { z-index: 5; cursor: pointer; pointer-events: auto; animation: tokpulse 1s ease-in-out infinite; }
+.tok.only::after {
+  content: ""; position: absolute; inset: -6px; border-radius: 50%;
+  border: 2px dashed #fff; animation: spin 4s linear infinite; pointer-events: none;
+}
+.tok:focus-visible, .dest:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+/* The glow grows and fades around the token; the token itself keeps its size and place. */
+@keyframes tokpulse {
+  0% { filter: brightness(1); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45), 0 0 0 2px rgba(255, 255, 255, 0.95), 0 2px 4px rgba(0, 0, 0, 0.55); }
+  50% { filter: brightness(1.25); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45), 0 0 0 5px rgba(255, 255, 255, 0.55), 0 0 12px 3px rgba(255, 255, 255, 0.45); }
+  100% { filter: brightness(1); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45), 0 0 0 8px rgba(255, 255, 255, 0), 0 2px 4px rgba(0, 0, 0, 0.55); }
+}
+
+.dest {
+  z-index: 4; cursor: pointer; pointer-events: auto;
+  width: calc(0.92 * 100% / 15); height: calc(0.92 * 100% / 15);
+  border: 2px dashed #fff; background: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--c) 70%, transparent), 0 0 10px rgba(255, 255, 255, 0.35);
+  animation: destpulse 0.8s ease-in-out infinite alternate;
+}
+.dest.cap { border-style: solid; background: rgba(255, 255, 255, 0.3); }
+@keyframes destpulse { from { opacity: 0.5; } to { opacity: 1; } }
+
+/* ---------- die and log ---------- */
+.ludo-controls {
+  display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center;
+  padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+}
+.die {
+  --c: #f3f1ea; --ring: #fff;
+  position: relative; flex: none; width: 76px; height: 76px; padding: 11px; border: 0; border-radius: 18px; cursor: pointer;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--c) 72%, #fff), var(--c));
+  box-shadow: 0 5px 0 color-mix(in srgb, var(--c) 50%, #000), 0 10px 22px rgba(0, 0, 0, 0.4);
+  transition: transform 0.08s, filter 0.2s;
+}
+.die .pips { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); width: 100%; height: 100%; }
+.die .pips i {
+  width: 12px; height: 12px; border-radius: 50%; place-self: center; opacity: 0;
+  background: #1a1220; box-shadow: inset 0 2px 0 rgba(0, 0, 0, 0.55);
+}
+.die .pips i.on { opacity: 1; }
+.die .roll-word {
+  position: absolute; inset: 0; display: none; place-items: center;
+  font-family: var(--display); font-size: 27px; letter-spacing: 0.06em; color: #1a1220;
+}
+.die.blank .pips { visibility: hidden; }
+.die.blank .roll-word { display: grid; }
+.die:disabled { cursor: default; filter: saturate(0.8) brightness(0.9); }
+.die:not(:disabled):active { transform: translateY(3px); }
+.die.ready { animation: dieready 1.2s ease-in-out infinite; }
+.die.rolling { animation: tumble 0.42s linear infinite; filter: none; }
+.die.landed { animation: land 0.3s ease-out; }
+.die:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+@keyframes dieready {
+  0%, 100% { box-shadow: 0 5px 0 color-mix(in srgb, var(--c) 50%, #000), 0 0 0 0 color-mix(in srgb, var(--ring) 75%, transparent); }
+  50% { box-shadow: 0 5px 0 color-mix(in srgb, var(--c) 50%, #000), 0 0 0 12px transparent; }
+}
+@keyframes tumble {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(90deg) scale(0.9) translateY(-3px); }
+  50% { transform: rotate(180deg) scale(1.06); }
+  75% { transform: rotate(270deg) scale(0.9); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+@keyframes land { from { transform: scale(1.18); } to { transform: none; } }
+
+.ludo-info { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.ludo-log { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; min-height: 44px; align-content: center; }
+.ludo-log li { font-size: 14px; line-height: 1.35; color: var(--muted); }
+.ludo-log li:first-child { font-size: 15px; font-weight: 600; color: var(--text); }
+.ludo-log:empty::before { content: "Roll to begin."; color: var(--muted); font-size: 14px; }
+.ludo-skip { width: auto; align-self: flex-start; padding: 8px 14px; }
+
+/* ---------- players ---------- */
+.ludo-players { grid-template-columns: 1fr 1fr; }
+.ludo-players li { gap: 10px; padding: 8px 10px; min-width: 0; border: 2px solid transparent; transition: border-color 0.2s, background 0.2s; }
+.ludo-players li.now { border-color: var(--c); background: color-mix(in srgb, var(--c) 12%, transparent); }
+.ludo-players li.gone { opacity: 0.5; }
+.ludo-players .avatar { width: 30px; height: 30px; font-size: 14px; }
+.ludo-players .who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; line-height: 1.2; }
+.ludo-players .who .name { flex: none; font-size: 14px; }
+.ludo-players .tags { display: flex; gap: 4px 6px; flex-wrap: wrap; align-items: center; }
+.ludo-players .tags:empty, .ludo-players .hc:empty { display: none; }
+.ludo-players .hc { font-size: 12px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.ludo-players .tag { font-size: 11px; padding: 0 6px; }
+.pawns { flex: none; display: grid; grid-template-columns: repeat(2, 10px); gap: 3px; }
+.pawns i { width: 10px; height: 10px; border-radius: 50%; border: 2px solid color-mix(in srgb, var(--c) 40%, transparent); }
+.pawns i.out { border-color: var(--c); }
+.pawns i.home { border-color: var(--c); background: var(--c); }
+
+/* ---------- game over ---------- */
+.ludo-over { display: grid; gap: 10px; justify-items: center; text-align: center; border-color: color-mix(in srgb, var(--c) 45%, transparent); }
+.ludo-over .trophy svg { display: block; width: 58px; height: 58px; filter: drop-shadow(0 4px 14px color-mix(in srgb, var(--c) 45%, transparent)); }
+.ludo-over .kicker { color: var(--muted); }
+.over-title { margin: 0; font-family: var(--display); font-weight: 400; font-size: 46px; line-height: 1; letter-spacing: 0.03em; color: var(--c); }
+.ludo-standings { list-style: none; margin: 4px 0; padding: 0; display: grid; gap: 6px; width: 100%; }
+.ludo-standings li { display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-radius: 12px; background: rgba(255, 255, 255, 0.04); text-align: left; }
+.ludo-standings li:first-child { background: color-mix(in srgb, var(--c) 16%, transparent); }
+.ludo-standings .place { width: 18px; font-family: var(--display); font-size: 22px; color: var(--muted); }
+.ludo-standings .avatar { width: 30px; height: 30px; font-size: 14px; }
+.ludo-standings .name { flex: 1; min-width: 0; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ludo-standings .res { font-size: 13px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+
+/* ---------- local setup ---------- */
+.ludo-setup .seg button { min-height: 54px; font-size: 22px; font-family: var(--display); letter-spacing: 0.04em; font-weight: 400; }
+.ludo-lineup li { border-left: 4px solid var(--c); }
+
+@media (max-width: 360px) {
+  .ludo-players { grid-template-columns: 1fr; }
+  .die { width: 68px; height: 68px; padding: 10px; }
+}
+
+/* ---------- wide screens: board on the left, everything else beside it ---------- */
+@media (min-width: 980px) and (min-height: 620px) {
+  .ludo {
+    --w: min(1080px, calc(100vw - 48px));
+    width: var(--w); margin-left: calc((100% - var(--w)) / 2);
+    display: grid; grid-template-columns: minmax(0, 1fr) 360px; grid-template-rows: repeat(5, auto) 1fr;
+    column-gap: 24px; row-gap: 12px; align-items: start;
+  }
+  .ludo > * { grid-column: 2; }
+  .ludo > .ludo-board { grid-column: 1; grid-row: 1 / -1; width: min(100%, calc(100dvh - 110px)); }
+  .ludo-players { grid-template-columns: 1fr; }
+}
+
+/* ---------- phones held sideways and other short screens: board on the left, sized to the height ---------- */
+@media (min-aspect-ratio: 4/3) and (max-height: 619px) {
+  .ludo {
+    /* As tall as the screen allows below the top bar, leaving at least 280px beside it for the die and players. */
+    --b: max(220px, min(calc(100vh - 88px), calc(100vw - 340px)));
+    --w: min(1080px, calc(100vw - max(32px, env(safe-area-inset-left) + env(safe-area-inset-right) + 16px)));
+    width: var(--w); margin-left: calc((100% - var(--w)) / 2);
+    display: grid; grid-template-columns: var(--b) minmax(0, 380px); justify-content: center;
+    grid-template-rows: repeat(5, auto) 1fr; column-gap: 16px; row-gap: 10px; align-items: start;
+  }
+  @supports (height: 100dvh) { .ludo { --b: max(220px, min(calc(100dvh - 88px), calc(100vw - 340px))); } }
+  .ludo > * { grid-column: 2; }
+  .ludo > .ludo-board { grid-column: 1; grid-row: 1 / -1; width: var(--b); }
+  .ludo .turn { min-height: 44px; padding: 8px 12px; }
+  .ludo-controls { padding: 10px 12px; gap: 12px; }
+  .die { width: 64px; height: 64px; padding: 9px; border-radius: 16px; }
+  .die .pips i { width: 10px; height: 10px; }
+  .die .roll-word { font-size: 23px; }
+  .ludo-players li { padding: 6px 8px; }
+}

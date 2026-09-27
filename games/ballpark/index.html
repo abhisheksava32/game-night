@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ballpark · Game Night</title>
+<meta name="description" content="A real-time party game for 2-8 players. Everyone guesses the same number. Closest guess wins.">
+<meta name="theme-color" content="#07241c">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'">
+<meta property="og:title" content="Ballpark · the closest-guess party game">
+<meta property="og:description" content="Grab 2-8 friends on any device. Guess the number. Closest wins.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23f4f1e8'/%3E%3Cpath d='M22 18c14 14 14 50 0 64M78 18c-14 14-14 50 0 64' fill='none' stroke='%23e0443e' stroke-width='5' stroke-dasharray='6 5'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header id="topbar" hidden>
+  <span class="brand-mini">BALL<span>PARK</span></span>
+  <span class="room-chip">Room <b id="tb-code">----</b></span>
+  <span id="conn" class="conn" role="status" aria-label="Connected"></span>
+  <button id="tb-rules" class="icon-btn" type="button" aria-label="How to play">?</button>
+  <button id="tb-leave" class="icon-btn" type="button" aria-label="Leave game">&#x2715;</button>
+</header>
+
+<div id="banner" class="banner" role="status" hidden></div>
+
+<main id="app">
+
+  <!-- HOME -->
+  <section id="screen-home" class="screen">
+    <a class="hub-link" href="../../">&#x2190; All games</a>
+    <div class="hero">
+      <p class="kicker">The closest-guess party game</p>
+      <h1 class="logo">BALL<span>PARK</span></h1>
+      <p class="lede">Everyone gets the same question. Nobody knows the exact number. Get closest, win the round.</p>
+    </div>
+
+    <div class="card entry">
+      <label for="name">Your name</label>
+      <input id="name" maxlength="16" autocomplete="nickname" placeholder="e.g. Sam" enterkeyhint="next">
+
+      <div class="tabs" role="tablist" aria-label="Join or host">
+        <button type="button" role="tab" id="tab-join" aria-selected="true" aria-controls="pane-join">Join a game</button>
+        <button type="button" role="tab" id="tab-host" aria-selected="false" aria-controls="pane-host">Host a game</button>
+      </div>
+
+      <form id="pane-join" role="tabpanel" aria-labelledby="tab-join">
+        <label for="code">Room code</label>
+        <input id="code" class="code-input" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCD" enterkeyhint="go">
+        <button id="btn-join" class="btn primary" type="submit">Join game</button>
+      </form>
+
+      <div id="pane-host" role="tabpanel" aria-labelledby="tab-host" hidden>
+        <p class="hint">You'll get a 4-letter room code to share. The host plays too.</p>
+        <button id="btn-host" class="btn primary" type="button">Create a room</button>
+      </div>
+
+      <p id="home-error" class="error" role="alert"></p>
+    </div>
+
+    <section class="card rules-card" aria-label="How to play">
+      <div class="rules-slot"></div>
+    </section>
+
+    <p class="footer-note">Works on phones, tablets and computers. No app, no sign-up.</p>
+  </section>
+
+  <!-- LOBBY -->
+  <section id="screen-lobby" class="screen" hidden>
+    <div class="board code-board">
+      <p class="kicker">Room code</p>
+      <div id="lobby-code" class="led big" aria-live="polite">----</div>
+      <button id="btn-share" class="btn ghost" type="button">Share invite link</button>
+      <p id="share-url" class="hint small break"></p>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Players <span id="lobby-count" class="pill"></span></h2>
+      <ul id="lobby-players" class="players"></ul>
+    </div>
+
+    <div id="host-settings" class="card" hidden>
+      <h2 class="card-title">Game settings</h2>
+      <p class="setting-label" id="lbl-rounds">Rounds</p>
+      <div class="seg" id="set-rounds" role="radiogroup" aria-labelledby="lbl-rounds">
+        <button type="button" data-v="5" role="radio">5</button>
+        <button type="button" data-v="7" role="radio">7</button>
+        <button type="button" data-v="10" role="radio">10</button>
+      </div>
+      <p class="setting-label" id="lbl-seconds">Time to guess</p>
+      <div class="seg" id="set-seconds" role="radiogroup" aria-labelledby="lbl-seconds">
+        <button type="button" data-v="20" role="radio">20s</button>
+        <button type="button" data-v="30" role="radio">30s</button>
+        <button type="button" data-v="45" role="radio">45s</button>
+      </div>
+      <button id="btn-start" class="btn primary big" type="button">Start game</button>
+      <p id="start-hint" class="hint center"></p>
+    </div>
+
+    <div id="guest-wait" class="card waiting" hidden>
+      <div class="pulse" aria-hidden="true"></div>
+      <p>Waiting for <b id="host-name">the host</b> to start the game&hellip;</p>
+      <p class="hint small"><span id="guest-settings"></span></p>
+    </div>
+  </section>
+
+  <!-- QUESTION -->
+  <section id="screen-question" class="screen" hidden>
+    <div class="round-row">
+      <span id="q-round" class="kicker"></span>
+      <span id="q-timer" class="led timer" aria-label="Seconds left">--</span>
+    </div>
+    <div class="timebar" aria-hidden="true"><div id="q-bar"></div></div>
+
+    <h2 id="q-text" class="question" tabindex="-1" data-focus></h2>
+
+    <form id="guess-form" class="card guess" autocomplete="off">
+      <label for="guess">Your guess</label>
+      <div class="guess-row">
+        <input id="guess" inputmode="decimal" enterkeyhint="done" placeholder="Type a number">
+        <span id="q-unit" class="unit"></span>
+      </div>
+      <div class="mult" role="group" aria-label="Add a multiplier">
+        <button type="button" data-word="thousand">thousand</button>
+        <button type="button" data-word="million">million</button>
+        <button type="button" data-word="billion">billion</button>
+      </div>
+      <p id="guess-preview" class="hint small" aria-live="polite"></p>
+      <button id="btn-lock" class="btn primary big" type="submit">Lock it in</button>
+    </form>
+
+    <div id="locked-box" class="card locked" hidden>
+      <p class="kicker">You locked in</p>
+      <div id="locked-val" class="led"></div>
+      <p class="hint">Your guess is hidden until the reveal.</p>
+    </div>
+
+    <div id="timeout-box" class="card locked" hidden>
+      <p class="kicker">Time's up</p>
+      <p class="hint">You didn't lock in a guess this round.</p>
+    </div>
+
+    <div class="card">
+      <h3 id="q-status" class="card-title small"></h3>
+      <ul id="q-players" class="chips"></ul>
+      <button id="btn-reveal-now" class="btn ghost small" type="button" hidden>Reveal now</button>
+    </div>
+  </section>
+
+  <!-- REVEAL -->
+  <section id="screen-reveal" class="screen" hidden>
+    <p id="r-round" class="kicker"></p>
+    <p id="r-question" class="question small"></p>
+    <div class="board answer-board">
+      <p class="kicker">The answer</p>
+      <div id="r-answer" class="led huge" tabindex="-1" data-focus></div>
+    </div>
+    <div id="r-line" class="numline card" aria-hidden="true"></div>
+    <ol id="r-rows" class="results"></ol>
+    <p id="r-fact" class="fact"></p>
+    <div class="card">
+      <h3 class="card-title small">Scoreboard</h3>
+      <ol id="r-scores" class="scores"></ol>
+    </div>
+    <div class="next-row">
+      <button id="btn-next" class="btn primary big" type="button" hidden>Next round</button>
+      <p id="r-next" class="hint center"></p>
+    </div>
+  </section>
+
+  <!-- FINAL -->
+  <section id="screen-final" class="screen" hidden>
+    <div class="board winner-board">
+      <p class="kicker">Game over</p>
+      <div class="trophy" aria-hidden="true">&#x1F3C6;</div>
+      <h2 id="f-winner" class="winner" tabindex="-1" data-focus></h2>
+      <p id="f-sub" class="hint"></p>
+    </div>
+    <div class="card">
+      <h3 class="card-title small">Final standings</h3>
+      <ol id="f-scores" class="scores"></ol>
+    </div>
+    <div id="f-host" class="stack" hidden>
+      <button id="btn-again" class="btn primary big" type="button">Play again</button>
+      <button id="btn-close" class="btn ghost" type="button">Close room</button>
+    </div>
+    <p id="f-guest" class="hint center" hidden>Waiting for the host to start another game&hellip;</p>
+  </section>
+
+  <!-- MESSAGE -->
+  <section id="screen-msg" class="screen" hidden>
+    <div class="card center msg">
+      <h2 id="msg-title"></h2>
+      <p id="msg-body"></p>
+      <button id="btn-msg-home" class="btn primary" type="button">Back to home</button>
+    </div>
+  </section>
+</main>
+
+<div id="busy" class="busy" hidden>
+  <div class="spinner" aria-hidden="true"></div>
+  <p id="busy-text">Connecting&hellip;</p>
+  <button id="busy-cancel" class="btn ghost small" type="button" hidden>Cancel</button>
+</div>
+
+<div id="toast" class="toast" role="status" hidden></div>
+
+<dialog id="rules-dialog" aria-label="How to play">
+  <div class="rules-slot"></div>
+  <form method="dialog"><button class="btn primary" type="submit">Got it</button></form>
+</dialog>
+
+<template id="rules-tpl">
+  <h2 class="card-title">How to play</h2>
+  <ol class="steps">
+    <li><b>Get in a room.</b> One player hosts and shares the 4-letter room code. Everyone else joins on their own phone or computer. 2 to 8 players.</li>
+    <li><b>Guess the number.</b> Each round asks a question with a number for an answer. Type your best guess and lock it in before the timer runs out. Nobody sees your guess until the reveal.</li>
+    <li><b>See who's closest.</b> When everyone has locked in, or time runs out, the real answer is revealed.</li>
+  </ol>
+  <h3 class="card-title small">Scoring</h3>
+  <ul class="scoring">
+    <li><span class="pts">+3</span><span>Closest guess</span></li>
+    <li><span class="pts">+1</span><span>Second closest <em>(games with 3+ players)</em></span></li>
+    <li><span class="pts bull">+2</span><span>Bullseye bonus: within 10% of the answer, on top of anything else</span></li>
+  </ul>
+  <p class="hint small">Tied guesses share the higher place. No guess, no points. After the last round (the host picks 5, 7 or 10), the highest total wins. Ties share the win.</p>
+  <p class="hint small">Tip: for big numbers, type <b>1.3</b> and tap <b>million</b>, or just type all the digits.</p>
+</template>
+
+<script src="../../vendor/mqtt.min.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
