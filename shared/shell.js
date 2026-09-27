@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------ *
- * Shell: the page frame every Game Night game uses.
+ * Shell: the page frame every Sava Game Night game uses.
  *
  * mountShell({
  *   id, title: ['TIC TAC', 'TOE'], tagline, rulesHtml,
@@ -53,7 +53,7 @@ export function mountShell(cfg) {
     <main class="wrap">
       <section id="gn-home" class="screen">
         <div class="center" style="padding-top:20px">
-          <p class="kicker">Game Night</p>
+          <p class="kicker">Sava Game Night</p>
           <h1 class="title">${esc(cfg.title[0])}<span>${esc(cfg.title[1] || '')}</span></h1>
           <p class="lede">${esc(cfg.tagline)}</p>
         </div>
